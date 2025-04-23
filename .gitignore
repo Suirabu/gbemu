@@ -1,0 +1,5 @@
+bin/
+obj/
+roms/
+.vscode/
+.DS_store
