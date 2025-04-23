@@ -3,30 +3,38 @@ using System.Text;
 
 namespace Emulator
 {
-    public class ROM
+    public class ROMDevice : IMemoryDevice
     {
         public byte[] Data { get; }
         public string Title { get; }
+        public bool Loaded { get; }
+        public uint Size { get; }
 
-        public ROM(byte[] data, string title)
+
+        public ROMDevice(byte[] data, string title, uint size, bool loaded = true)
         {
             Data = data;
             Title = title;
+            Loaded = loaded;
         }
 
-        public static ROM FromFile(string path)
+        public static ROMDevice FromFile(string path)
         {
             if(!File.Exists(path))
                 throw new FileNotFoundException($"ROM file '{path}' not found.");
 
             byte[] data = File.ReadAllBytes(path);
 
-            if(!ROM.HeaderIsValid(data))
+            if(!ROMDevice.HeaderIsValid(data))
                 throw new InvalidDataException("Invalid ROM header.");
 
+            // get rom title
             string title = Encoding.ASCII.GetString(data, 0x0134, 16);
 
-            return new ROM(data, title);
+            // get rom size
+            uint size = (uint)(0x8000 * (data[0x0148] << 1)); // 32KiB * 2^banks
+
+            return new ROMDevice(data, title, size);
         }
 
         private static bool HeaderIsValid(byte[] data)
@@ -54,6 +62,28 @@ namespace Emulator
             if(finalChecksum != expectedChecksum)
                 return false;
 
+            return true;
+        }
+
+        public bool Contains(ushort address)
+        {
+            // 0000-3FFF: ROM bank 00
+            // 4000-7FFF: ROM bank 01-NN (switchable)
+            return address >= 0x0000 && address < 0x8000;
+        }
+
+        public byte ReadByte(ushort address)
+        {
+            return Data[address];
+        }
+
+        public void WriteByte(ushort address, byte value)
+        {
+            throw new InvalidOperationException("Cannot write to ROM; range is read-only.");
+        }
+
+        public bool IsReadOnly()
+        {
             return true;
         }
     }

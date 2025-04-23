@@ -4,11 +4,16 @@
     {
         public static void Main(string[] args)
         {
+            // Load GB ROM from file
             if (args.Length < 1)
                 throw new ArgumentException("Expected a path to a GameBoy ROM file.");
         
-            var romPath = args[0];
-            ROM rom = ROM.FromFile(romPath);
+            string romPath = args[0];
+            ROMDevice rom = ROMDevice.FromFile(romPath);
+
+            // Create bus and map memory devices
+            Bus bus = new Bus();
+            bus.MapMemoryDevice(rom);
         }
     }
 }
