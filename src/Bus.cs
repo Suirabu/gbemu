@@ -18,7 +18,7 @@ namespace Emulator
             return device.ReadByte(address);
         }
 
-        void WriteByte(ushort address, byte value)
+        public void WriteByte(ushort address, byte value)
         {
             IMemoryDevice device = GetDeviceWithAddress(address);
             device.WriteByte(address, value);

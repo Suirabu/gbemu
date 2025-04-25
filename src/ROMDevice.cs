@@ -10,7 +10,6 @@ namespace Emulator
         public bool Loaded { get; }
         public uint Size { get; }
 
-
         public ROMDevice(byte[] data, string title, uint size, bool loaded = true)
         {
             Data = data;
