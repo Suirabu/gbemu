@@ -35,7 +35,7 @@ namespace Emulator
                 _instructionTable[i] = new Instruction("UNIMPLEMENTED", 4, 4, 0, ibytes => UnimplementedInstruction(ibytes));
 
             _instructionTable[0x00] = new Instruction("nop", 1, 4, 0, _ => { /* do nothing */ });
-            _instructionTable[0x24] = new Instruction("inc h", 1, 4, 0, _ => { _regs.H = INC__r8(_regs.H); });
+            _instructionTable[0x24] = new Instruction("inc h", 1, 4, 0, _ => { INC__r8(ref _regs.H); });
             _instructionTable[0x40] = new Instruction("ld b, b", 1, 4, 0, _ => { _regs.B = _regs.B; });
             _instructionTable[0x47] = new Instruction("ld b, b", 1, 4, 0, _ => { _regs.B = _regs.A; });
             _instructionTable[0xC0] = new Instruction("ret nz", 1, 20, 8, _ => {
@@ -134,7 +134,7 @@ namespace Emulator
             return (ushort)(_bus.ReadByte(_regs.SP++) | _bus.ReadByte(_regs.SP++) << 8);
         }
 
-        private byte INC__r8(byte register)
+        private void INC__r8(ref byte register)
         {
             bool halfCarry = ((register & 0xF) + (1 & 0xF)) > 0xF;
             byte result = (byte)(register + 1);
@@ -143,7 +143,7 @@ namespace Emulator
             _regs.SetFlag(CPUFlags.N, false);
             _regs.SetFlag(CPUFlags.Z, result == 0);
 
-            return result;
+            register = result;
         }
 
         private void UnimplementedInstruction(byte[] ibytes)
