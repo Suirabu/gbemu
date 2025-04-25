@@ -17,7 +17,7 @@ namespace Emulator
 
         public byte ReadByte(ushort address)
         {
-            return Data[address];
+            return Data[address - MEMORY_OFFSET];
         }
 
         public void WriteByte(ushort address, byte value)
