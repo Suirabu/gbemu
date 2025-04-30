@@ -20,6 +20,7 @@ namespace Emulator
         private readonly Bus _bus;
         private readonly Instruction[] _instructionTable = new Instruction[256];
         private Registers _regs = new Registers();
+        private bool _ime = false;
 
         public CPU(Bus bus)
         {
@@ -53,6 +54,10 @@ namespace Emulator
             _instructionTable[0xF7] = new Instruction("rst 30H", 1, 16, 0, _ => { RST__tgt3(6); });
             _instructionTable[0xFF] = new Instruction("rst 38H", 1, 16, 0, _ => { RST__tgt3(7); });
 
+            // interupt enable/disable
+            _instructionTable[0xF3] = new Instruction("di", 1, 4, 0, _ => { _ime = false; });
+            _instructionTable[0xFB] = new Instruction("ei", 1, 4, 0, _ => { _ime = true; });
+
             _instructionTable[0xC3] = new Instruction("jp imm16", 3, 16, 0, ibytes => {
                 _regs.PC = (ushort)(ibytes[2] << 8 | ibytes[1]);
             });
@@ -68,6 +73,8 @@ namespace Emulator
             _regs.BC = 0x0013;
             _regs.DE = 0x00D8;
             _regs.HL = 0x00D8;
+
+            _ime = false; // disable maskable interupts
 
             // ignoring these values for now since we don't have an IO or IR mapped
             // _bus.WriteByte(0xFF05, 0x00);
