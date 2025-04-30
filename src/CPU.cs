@@ -37,8 +37,8 @@ namespace Emulator
 
             _instructionTable[0x00] = new Instruction("nop", 1, 4, 0, _ => { /* do nothing */ });
             _instructionTable[0x24] = new Instruction("inc h", 1, 4, 0, _ => { INC__r8(ref _regs.H); });
-            _instructionTable[0x40] = new Instruction("ld b, b", 1, 4, 0, _ => { _regs.B = _regs.B; });
-            _instructionTable[0x47] = new Instruction("ld b, b", 1, 4, 0, _ => { _regs.B = _regs.A; });
+            _instructionTable[0x40] = new Instruction("ld b, b", 1, 4, 0, _ => {});
+            _instructionTable[0x47] = new Instruction("ld b, a", 1, 4, 0, _ => { _regs.B = _regs.A; });
             _instructionTable[0xC0] = new Instruction("ret nz", 1, 20, 8, _ => {
                 if(!_regs.GetFlag(CPUFlags.Z))
                     _regs.PC = PopWord();
