@@ -42,13 +42,19 @@ namespace Emulator
                 if(!_regs.GetFlag(CPUFlags.Z))
                     _regs.PC = PopWord();
             });
-            _instructionTable[0xC7] = new Instruction("rst 00H", 1, 16, 0, ibytes => {
-                PushWord(_regs.PC);
-                byte t = (byte)(ibytes[0] >> 3 & 0x07);
-                _regs.PC = (ushort)(t * 8);
-            });
+
+            // rst XXH instructions
+            _instructionTable[0xC7] = new Instruction("rst 00H", 1, 16, 0, _ => { RST__tgt3(0); });
+            _instructionTable[0xCF] = new Instruction("rst 08H", 1, 16, 0, _ => { RST__tgt3(1); });
+            _instructionTable[0xD7] = new Instruction("rst 10H", 1, 16, 0, _ => { RST__tgt3(2); });
+            _instructionTable[0xDF] = new Instruction("rst 18H", 1, 16, 0, _ => { RST__tgt3(3); });
+            _instructionTable[0xE7] = new Instruction("rst 20H", 1, 16, 0, _ => { RST__tgt3(4); });
+            _instructionTable[0xEF] = new Instruction("rst 28H", 1, 16, 0, _ => { RST__tgt3(5); });
+            _instructionTable[0xF7] = new Instruction("rst 30H", 1, 16, 0, _ => { RST__tgt3(6); });
+            _instructionTable[0xFF] = new Instruction("rst 38H", 1, 16, 0, _ => { RST__tgt3(7); });
+
             _instructionTable[0xC3] = new Instruction("jp imm16", 3, 16, 0, ibytes => {
-                _regs.PC = (ushort)(ibytes[1] << 8 | ibytes[2]);
+                _regs.PC = (ushort)(ibytes[2] << 8 | ibytes[1]);
             });
             _instructionTable[0xC9] = new Instruction("ret", 1, 16, 0, _ => { _regs.PC = PopWord(); });
         }
@@ -144,6 +150,12 @@ namespace Emulator
             _regs.SetFlag(CPUFlags.Z, result == 0);
 
             register = result;
+        }
+
+        private void RST__tgt3(byte tgt3)
+        {
+            PushWord(_regs.PC);
+            _regs.PC = (ushort)(tgt3 * 8);
         }
 
         private void UnimplementedInstruction(byte[] ibytes)
