@@ -15,6 +15,7 @@
             Bus bus = new Bus();
             bus.MapMemoryDevice(rom);
             bus.MapMemoryDevice(new HRAMDevice());
+            bus.MapMemoryDevice(new WRAMDevice());
 
             // Create CPU and begin executing instructions
             CPU cpu = new CPU(bus);
