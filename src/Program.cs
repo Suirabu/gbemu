@@ -9,11 +9,10 @@
                 throw new ArgumentException("Expected a path to a GameBoy ROM file.");
         
             string romPath = args[0];
-            ROMDevice rom = ROMDevice.FromFile(romPath);
 
             // Create bus and map memory devices
             Bus bus = new Bus();
-            bus.MapMemoryDevice(rom);
+            bus.MapMemoryDevice(ROMDevice.FromFile(romPath));
             bus.MapMemoryDevice(new HRAMDevice());
             bus.MapMemoryDevice(new WRAMDevice());
 
