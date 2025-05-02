@@ -29,9 +29,10 @@ namespace Emulator
             for(int i = 0; i < _instructionTable.Length; i++)
                 _instructionTable[i] = new Instruction("UNIMPLEMENTED", 4, 4, 0, ibytes => UnimplementedInstruction(ibytes));
 
+            // nop
             _instructionTable[0x00] = new Instruction("nop", 1, 4, 0, _ => { /* do nothing */ });
 
-            // direct 16-bit register loads
+            // ld r16,imm16
             _instructionTable[0x01] = new Instruction("ld bc,imm16", 3, 12, 0, ibytes => {
                 _regs.BC = (ushort)(ibytes[2] << 8 | ibytes[1]);
             });
@@ -44,6 +45,18 @@ namespace Emulator
             _instructionTable[0x31] = new Instruction("ld sp,imm16", 3, 12, 0, ibytes => {
                 _regs.SP = (ushort)(ibytes[2] << 8 | ibytes[1]);
             });
+
+            // ld r8,imm8
+            _instructionTable[0x06] = new Instruction("ld b,imm8", 2, 8, 0, ibytes => { _regs.B = ibytes[1]; });
+            _instructionTable[0x0E] = new Instruction("ld c,imm8", 2, 8, 0, ibytes => { _regs.C = ibytes[1]; });
+            _instructionTable[0x16] = new Instruction("ld d,imm8", 2, 8, 0, ibytes => { _regs.D = ibytes[1]; });
+            _instructionTable[0x1E] = new Instruction("ld e,imm8", 2, 8, 0, ibytes => { _regs.E = ibytes[1]; });
+            _instructionTable[0x26] = new Instruction("ld h,imm8", 2, 8, 0, ibytes => { _regs.H = ibytes[1]; });
+            _instructionTable[0x2E] = new Instruction("ld l,imm8", 2, 8, 0, ibytes => { _regs.L = ibytes[1]; });
+            _instructionTable[0x36] = new Instruction("ld [hl],imm8", 2, 8, 0, ibytes => {
+                _bus.WriteByte(_regs.HL, ibytes[1]);
+            });
+            _instructionTable[0x3E] = new Instruction("ld a,imm8", 2, 8, 0, ibytes => { _regs.A = ibytes[1]; });
 
             _instructionTable[0x24] = new Instruction("inc h", 1, 4, 0, _ => { INC__r8(ref _regs.H); });
             _instructionTable[0x40] = new Instruction("ld b,b", 1, 4, 0, _ => {});
