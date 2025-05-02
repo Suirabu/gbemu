@@ -13,6 +13,7 @@ namespace Emulator
         {
             Data = data;
             Title = title;
+            Size = size;
             Loaded = loaded;
         }
 
