@@ -37,8 +37,12 @@ namespace Emulator
 
             _instructionTable[0x00] = new Instruction("nop", 1, 4, 0, _ => { /* do nothing */ });
             _instructionTable[0x24] = new Instruction("inc h", 1, 4, 0, _ => { INC__r8(ref _regs.H); });
-            _instructionTable[0x40] = new Instruction("ld b, b", 1, 4, 0, _ => {});
-            _instructionTable[0x47] = new Instruction("ld b, a", 1, 4, 0, _ => { _regs.B = _regs.A; });
+            _instructionTable[0x31] = new Instruction("ld sp,imm16", 3, 12, 0, ibytes => {
+                _regs.SP = (ushort)(ibytes[2] << 8 | ibytes[1]);
+            });
+            _instructionTable[0x40] = new Instruction("ld b,b", 1, 4, 0, _ => {});
+            _instructionTable[0x47] = new Instruction("ld b,a", 1, 4, 0, _ => { _regs.B = _regs.A; });
+            _instructionTable[0x57] = new Instruction("ld d,a", 1, 4, 0, _ => { _regs.D = _regs.A; });
             _instructionTable[0xC0] = new Instruction("ret nz", 1, 20, 8, _ => {
                 if(!_regs.GetFlag(CPUFlags.Z))
                     _regs.PC = PopWord();
@@ -53,6 +57,9 @@ namespace Emulator
             _instructionTable[0xEF] = new Instruction("rst 28H", 1, 16, 0, _ => { RST__tgt3(5); });
             _instructionTable[0xF7] = new Instruction("rst 30H", 1, 16, 0, _ => { RST__tgt3(6); });
             _instructionTable[0xFF] = new Instruction("rst 38H", 1, 16, 0, _ => { RST__tgt3(7); });
+
+            // logical operations
+            _instructionTable[0xAF] = new Instruction("xor a,a", 1, 4, 0, _ => { XOR(ref _regs.A, _regs.A); });
 
             // interupt enable/disable
             _instructionTable[0xF3] = new Instruction("di", 1, 4, 0, _ => { _ime = false; });
@@ -163,6 +170,14 @@ namespace Emulator
         {
             PushWord(_regs.PC);
             _regs.PC = (ushort)(tgt3 * 8);
+        }
+
+        private void XOR(ref byte register, byte value)
+        {
+            register ^= value;
+
+            _regs.ClearFlags();
+            _regs.SetFlag(CPUFlags.Z, register == 0);
         }
 
         private void UnimplementedInstruction(byte[] ibytes)

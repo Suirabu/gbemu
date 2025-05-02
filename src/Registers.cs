@@ -66,6 +66,11 @@ namespace Emulator
                 _flags &= (byte)~flag;
         }
 
+        public void ClearFlags()
+        {
+            _flags = 0;
+        }
+
         public bool GetFlag(CPUFlags flag)
         {
             return (_flags & (byte)flag) != 0;
