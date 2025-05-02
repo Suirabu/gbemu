@@ -46,6 +46,20 @@ namespace Emulator
                 _regs.SP = (ushort)(ibytes[2] << 8 | ibytes[1]);
             });
 
+            // ld r16mem,a
+            _instructionTable[0x02] = new Instruction("ld (hl-),a", 1, 8, 0, _ => {
+                _bus.WriteByte(_regs.BC, _regs.A);
+            });
+            _instructionTable[0x12] = new Instruction("ld (hl-),a", 1, 8, 0, _ => {
+                _bus.WriteByte(_regs.DE, _regs.A);
+            });
+            _instructionTable[0x22] = new Instruction("ld (hl-),a", 1, 8, 0, _ => {
+                _bus.WriteByte(_regs.HL++, _regs.A);
+            });
+            _instructionTable[0x32] = new Instruction("ld (hl-),a", 1, 8, 0, _ => {
+                _bus.WriteByte(_regs.HL--, _regs.A);
+            });
+
             // ld r8,imm8
             _instructionTable[0x06] = new Instruction("ld b,imm8", 2, 8, 0, ibytes => { _regs.B = ibytes[1]; });
             _instructionTable[0x0E] = new Instruction("ld c,imm8", 2, 8, 0, ibytes => { _regs.C = ibytes[1]; });
