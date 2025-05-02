@@ -1,9 +1,3 @@
-using System.ComponentModel;
-using System.Dynamic;
-using System.Reflection.Metadata.Ecma335;
-using System.Runtime.CompilerServices;
-using System.Runtime.Intrinsics.X86;
-
 namespace Emulator
 {
     public record Instruction
@@ -188,7 +182,7 @@ namespace Emulator
             // of this, we decrement PC by 4 before dumping register values so that the value of PC
             // accurately reflects where execution halted.
             _regs.PC -= 4;
-            
+
             _regs.DumpRegisterValues();
             throw new NotImplementedException($"Opcode 0x{ibytes[0]:X} has not been implemented yet.");
         }
