@@ -182,6 +182,13 @@ namespace Emulator
 
         private void UnimplementedInstruction(byte[] ibytes)
         {
+            // Little hack: In this CPU implementation PC is incremented past the executed instruction
+            // before the instruction is executed. That means that when this instruction is called,
+            // PC will already be pointing to the bytes of the next instruction to be executed. Because
+            // of this, we decrement PC by 4 before dumping register values so that the value of PC
+            // accurately reflects where execution halted.
+            _regs.PC -= 4;
+            
             _regs.DumpRegisterValues();
             throw new NotImplementedException($"Opcode 0x{ibytes[0]:X} has not been implemented yet.");
         }
