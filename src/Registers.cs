@@ -75,5 +75,17 @@ namespace Emulator
         {
             return (_flags & (byte)flag) != 0;
         }
+
+        public void DumpRegisterValues()
+        {
+            Console.WriteLine("REGISTER DUMP");
+            Console.WriteLine("pc   sp   a  f  b  c  d  e  h  l");
+            Console.WriteLine($"{PC:X4} {SP:X4} {A:X2} {F:X2} {B:X2} {C:X2} {D:X2} {E:X2} {H:X2} {L:X2}");
+            Console.WriteLine();
+            Console.WriteLine("FLAGS DUMP");
+            Console.WriteLine("Z N H C");
+            Console.WriteLine($"{(GetFlag(CPUFlags.Z) ? 1 : 0)} {(GetFlag(CPUFlags.N) ? 1 : 0)} {(GetFlag(CPUFlags.H) ? 1 : 0)} {(GetFlag(CPUFlags.C) ? 1 : 0)}");
+            Console.WriteLine();
+        }
     }
 }

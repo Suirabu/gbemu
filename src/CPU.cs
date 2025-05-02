@@ -182,6 +182,7 @@ namespace Emulator
 
         private void UnimplementedInstruction(byte[] ibytes)
         {
+            _regs.DumpRegisterValues();
             throw new NotImplementedException($"Opcode 0x{ibytes[0]:X} has not been implemented yet.");
         }
     }
