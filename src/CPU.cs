@@ -30,10 +30,22 @@ namespace Emulator
                 _instructionTable[i] = new Instruction("UNIMPLEMENTED", 4, 4, 0, ibytes => UnimplementedInstruction(ibytes));
 
             _instructionTable[0x00] = new Instruction("nop", 1, 4, 0, _ => { /* do nothing */ });
-            _instructionTable[0x24] = new Instruction("inc h", 1, 4, 0, _ => { INC__r8(ref _regs.H); });
+
+            // direct 16-bit register loads
+            _instructionTable[0x01] = new Instruction("ld bc,imm16", 3, 12, 0, ibytes => {
+                _regs.BC = (ushort)(ibytes[2] << 8 | ibytes[1]);
+            });
+            _instructionTable[0x11] = new Instruction("ld de,imm16", 3, 12, 0, ibytes => {
+                _regs.DE = (ushort)(ibytes[2] << 8 | ibytes[1]);
+            });
+            _instructionTable[0x21] = new Instruction("ld hl,imm16", 3, 12, 0, ibytes => {
+                _regs.HL = (ushort)(ibytes[2] << 8 | ibytes[1]);
+            });
             _instructionTable[0x31] = new Instruction("ld sp,imm16", 3, 12, 0, ibytes => {
                 _regs.SP = (ushort)(ibytes[2] << 8 | ibytes[1]);
             });
+
+            _instructionTable[0x24] = new Instruction("inc h", 1, 4, 0, _ => { INC__r8(ref _regs.H); });
             _instructionTable[0x40] = new Instruction("ld b,b", 1, 4, 0, _ => {});
             _instructionTable[0x47] = new Instruction("ld b,a", 1, 4, 0, _ => { _regs.B = _regs.A; });
             _instructionTable[0x57] = new Instruction("ld d,a", 1, 4, 0, _ => { _regs.D = _regs.A; });
