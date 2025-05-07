@@ -5,6 +5,7 @@ namespace Emulator
         bool Contains(ushort address);
         byte ReadByte(ushort address);
         void WriteByte(ushort address, byte value);
+        ref byte GetReferenceToByte(ushort address);
         bool IsReadOnly();
     }
 }

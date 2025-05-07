@@ -22,6 +22,11 @@ namespace Emulator
             Data[address - MEMORY_OFFSET] = value;
         }
 
+        public ref byte GetReferenceToByte(ushort address)
+        {
+            return ref Data[address - MEMORY_OFFSET];
+        }
+
         public bool IsReadOnly()
         {
             return false;

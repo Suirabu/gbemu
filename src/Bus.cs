@@ -24,6 +24,12 @@ namespace Emulator
             device.WriteByte(address, value);
         }
 
+        public ref byte GetReferenceToByte(ushort address)
+        {
+            IMemoryDevice device = GetDeviceWithAddress(address);
+            return ref device.GetReferenceToByte(address);
+        }
+
         private IMemoryDevice GetDeviceWithAddress(ushort address)
         {
             foreach(var device in _devices)

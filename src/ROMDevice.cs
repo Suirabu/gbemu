@@ -81,6 +81,11 @@ namespace Emulator
             throw new InvalidOperationException("Cannot write to ROM; range is read-only.");
         }
 
+        public ref byte GetReferenceToByte(ushort address)
+        {
+            return ref Data[address];
+        }
+
         public bool IsReadOnly()
         {
             return true;

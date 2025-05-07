@@ -72,10 +72,36 @@ namespace Emulator
             });
             _instructionTable[0x3E] = new Instruction("ld a,imm8", 2, 8, 0, ibytes => { _regs.A = ibytes[1]; });
 
+            // dec r8
+            _instructionTable[0x05] = new Instruction("dec b", 1, 4, 0, _ => { DEC__r8(ref _regs.B); });
+            _instructionTable[0x0D] = new Instruction("dec c", 1, 4, 0, _ => { DEC__r8(ref _regs.C); });
+            _instructionTable[0x15] = new Instruction("dec d", 1, 4, 0, _ => { DEC__r8(ref _regs.D); });
+            _instructionTable[0x1D] = new Instruction("dec e", 1, 4, 0, _ => { DEC__r8(ref _regs.E); });
+            _instructionTable[0x25] = new Instruction("dec h", 1, 4, 0, _ => { DEC__r8(ref _regs.H); });
+            _instructionTable[0x2D] = new Instruction("dec l", 1, 4, 0, _ => { DEC__r8(ref _regs.L); });
+            _instructionTable[0x35] = new Instruction("dec (hl)", 1, 4, 0, _ => {
+                DEC__r8(ref _bus.GetReferenceToByte(_regs.HL));
+            });
+            _instructionTable[0x3D] = new Instruction("dec a", 1, 4, 0, _ => { DEC__r8(ref _regs.A); });
+
+            // inc r8
+            _instructionTable[0x04] = new Instruction("inc b", 1, 4, 0, _ => { INC__r8(ref _regs.B); });
+            _instructionTable[0x0C] = new Instruction("inc c", 1, 4, 0, _ => { INC__r8(ref _regs.C); });
+            _instructionTable[0x14] = new Instruction("inc d", 1, 4, 0, _ => { INC__r8(ref _regs.D); });
+            _instructionTable[0x1C] = new Instruction("inc e", 1, 4, 0, _ => { INC__r8(ref _regs.E); });
             _instructionTable[0x24] = new Instruction("inc h", 1, 4, 0, _ => { INC__r8(ref _regs.H); });
+            _instructionTable[0x2C] = new Instruction("inc l", 1, 4, 0, _ => { INC__r8(ref _regs.L); });
+            _instructionTable[0x34] = new Instruction("inc (hl)", 1, 4, 0, _ => {
+                INC__r8(ref _bus.GetReferenceToByte(_regs.HL));
+            });
+            _instructionTable[0x3C] = new Instruction("inc a", 1, 4, 0, _ => { INC__r8(ref _regs.A); });
+            
+            // ld r8,r8
             _instructionTable[0x40] = new Instruction("ld b,b", 1, 4, 0, _ => {});
             _instructionTable[0x47] = new Instruction("ld b,a", 1, 4, 0, _ => { _regs.B = _regs.A; });
             _instructionTable[0x57] = new Instruction("ld d,a", 1, 4, 0, _ => { _regs.D = _regs.A; });
+            
+            // ret
             _instructionTable[0xC0] = new Instruction("ret nz", 1, 20, 8, _ => {
                 if(!_regs.GetFlag(CPUFlags.Z))
                     _regs.PC = PopWord();
@@ -194,6 +220,18 @@ namespace Emulator
 
             _regs.SetFlag(CPUFlags.H, halfCarry);
             _regs.SetFlag(CPUFlags.N, false);
+            _regs.SetFlag(CPUFlags.Z, result == 0);
+
+            register = result;
+        }
+
+        private void DEC__r8(ref byte register)
+        {
+            bool halfCarry = ((register & 0xF) - (1 & 0xF)) < 0;
+            byte result = (byte)(register - 1);
+
+            _regs.SetFlag(CPUFlags.H, halfCarry);
+            _regs.SetFlag(CPUFlags.N, true);
             _regs.SetFlag(CPUFlags.Z, result == 0);
 
             register = result;
