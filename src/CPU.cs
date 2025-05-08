@@ -16,6 +16,8 @@ namespace Emulator
         private Registers _regs = new Registers();
         private bool _ime = false;
 
+        private int _ranInstructions;
+
         public CPU(Bus bus)
         {
             _bus = bus;
@@ -110,32 +112,27 @@ namespace Emulator
             // jr cond,r8
             _instructionTable[0x18] = new Instruction("jr r8", 2, 12, 0, ibytes => {
                 sbyte offset = (sbyte)ibytes[1];
-                ushort baseAddress = (ushort)(_regs.PC - ibytes.Length);
-                _regs.PC = (ushort)(baseAddress + offset);
+                _regs.PC = (ushort)(_regs.PC + offset);
             });
             _instructionTable[0x20] = new Instruction("jr nz,r8", 2, 12, 8, ibytes => {
                 sbyte offset = (sbyte)ibytes[1];
-                ushort baseAddress = (ushort)(_regs.PC - ibytes.Length);
                 if(!_regs.GetFlag(CPUFlags.Z))
-                    _regs.PC = (ushort)(baseAddress + offset);
+                    _regs.PC = (ushort)(_regs.PC + offset);
             });
             _instructionTable[0x28] = new Instruction("jr z,r8", 2, 12, 8, ibytes => {
                 sbyte offset = (sbyte)ibytes[1];
-                ushort baseAddress = (ushort)(_regs.PC - ibytes.Length);
                 if(_regs.GetFlag(CPUFlags.Z))
-                    _regs.PC = (ushort)(baseAddress + offset);
+                    _regs.PC = (ushort)(_regs.PC + offset);
             });
             _instructionTable[0x30] = new Instruction("jr nc,r8", 2, 12, 8, ibytes => {
                 sbyte offset = (sbyte)ibytes[1];
-                ushort baseAddress = (ushort)(_regs.PC - ibytes.Length);
                 if(!_regs.GetFlag(CPUFlags.C))
-                    _regs.PC = (ushort)(baseAddress + offset);
+                    _regs.PC = (ushort)(_regs.PC + offset);
             });
             _instructionTable[0x38] = new Instruction("jr c,r8", 2, 12, 8, ibytes => {
                 sbyte offset = (sbyte)ibytes[1];
-                ushort baseAddress = (ushort)(_regs.PC - ibytes.Length);
                 if(_regs.GetFlag(CPUFlags.C))
-                    _regs.PC = (ushort)(baseAddress + offset);
+                    _regs.PC = (ushort)(_regs.PC + offset);
             });
 
             // rst XXH instructions
@@ -219,6 +216,8 @@ namespace Emulator
                 // read instruction bytes and increase pc
                 instructionBytes[i] = _bus.ReadByte(_regs.PC++);
             }
+
+            _ranInstructions++;
 
             string formattedInstructionBytes = string.Join(" ", instructionBytes.Select(b => b.ToString("X2")));
             Console.WriteLine($"{instructionStart:X4}: {formattedInstructionBytes} ({instruction.Mnemonic})");
