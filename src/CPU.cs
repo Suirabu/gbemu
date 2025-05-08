@@ -217,11 +217,20 @@ namespace Emulator
                 instructionBytes[i] = _bus.ReadByte(_regs.PC++);
             }
 
-            _ranInstructions++;
-
             string formattedInstructionBytes = string.Join(" ", instructionBytes.Select(b => b.ToString("X2")));
             Console.WriteLine($"{instructionStart:X4}: {formattedInstructionBytes} ({instruction.Mnemonic})");
-            instruction.Handler(instructionBytes);
+
+            try 
+            {
+                instruction.Handler(instructionBytes);
+                _ranInstructions++;
+            }
+            catch(Exception e)
+            {
+                _regs.DumpRegisterValues();
+                Console.WriteLine($"Ran {_ranInstructions} instructions");
+                throw;
+            }
         }
 
         public void BeginExecution()
@@ -289,8 +298,6 @@ namespace Emulator
             // of this, we decrement PC by 4 before dumping register values so that the value of PC
             // accurately reflects where execution halted.
             _regs.PC -= 4;
-
-            _regs.DumpRegisterValues();
             throw new NotImplementedException($"Opcode 0x{ibytes[0]:X} has not been implemented yet.");
         }
     }

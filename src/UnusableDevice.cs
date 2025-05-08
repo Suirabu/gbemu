@@ -1,9 +1,9 @@
 namespace Emulator
 {
-    public class HRAMDevice : IMemoryDevice
+    public class UnusableDevice : IMemoryDevice
     {
-        const uint MEMORY_OFFSET = 0xFF80;
-        const uint SIZE = 0xFFFF - MEMORY_OFFSET;
+        const uint MEMORY_OFFSET = 0xFEA0;
+        const uint SIZE = 0xFF00 - MEMORY_OFFSET;
 
         public byte[] Data { get; } = new byte[SIZE];
 
@@ -14,11 +14,14 @@ namespace Emulator
 
         public byte ReadByte(ushort address)
         {
-            return Data[address - MEMORY_OFFSET];
+            // On DMG, MGB, SGB, and SGB2, reads during OAM block trigger OAM corruption. Reads otherwise return $00.
+            // https://gbdev.io/pandocs/Memory_Map.html#fea0feff-range
+            return 0;
         }
 
         public void WriteByte(ushort address, byte value)
         {
+            // Not sure if this is useful for anything
             Data[address - MEMORY_OFFSET] = value;
         }
 

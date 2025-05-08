@@ -1,9 +1,9 @@
 namespace Emulator
 {
-    public class HRAMDevice : IMemoryDevice
+    public class OAMDevice : IMemoryDevice
     {
-        const uint MEMORY_OFFSET = 0xFF80;
-        const uint SIZE = 0xFFFF - MEMORY_OFFSET;
+        const uint MEMORY_OFFSET = 0xFE00;
+        const uint SIZE = 0xFEA0 - MEMORY_OFFSET;
 
         public byte[] Data { get; } = new byte[SIZE];
 
