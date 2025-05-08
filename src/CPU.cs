@@ -9,12 +9,20 @@ namespace Emulator
         Action<byte[]> Handler
     );
 
+    enum CPUMode
+    {
+        Active,
+        Halted,
+        Stopped,
+    }
+
     public class CPU
     {
         private readonly Bus _bus;
         private readonly Instruction[] _instructionTable = new Instruction[256];
         private Registers _regs = new Registers();
         private bool _ime = false;
+        private CPUMode _mode;
 
         private int _ranInstructions;
 
@@ -33,6 +41,8 @@ namespace Emulator
 
             // nop
             _instructionTable[0x00] = new Instruction("nop", 1, 4, 0, _ => { /* do nothing */ });
+            _instructionTable[0x10] = new Instruction("stop 0", 2, 8, 0, _ => _mode = CPUMode.Stopped);
+            _instructionTable[0x76] = new Instruction("halt", 1, 4, 0, _ => _mode = CPUMode.Halted);
 
             // ld r16,imm16
             _instructionTable[0x01] = new Instruction("ld bc,imm16", 3, 12, 0, ibytes => {
@@ -249,6 +259,7 @@ namespace Emulator
             _regs.HL = 0x00D8;
 
             _ime = false; // disable maskable interupts
+            _mode = CPUMode.Active;
 
             // ignoring these values for now since we don't have an IO or IR mapped
             // _bus.WriteByte(0xFF05, 0x00);
@@ -317,7 +328,7 @@ namespace Emulator
         {
             Reset();
 
-            while(true)
+            while(_mode == CPUMode.Active)
                 Step();
         }
 
