@@ -109,27 +109,27 @@ namespace Emulator
                     _regs.PC = PopWord();
             });
 
-            // jr cond,r8
-            _instructionTable[0x18] = new Instruction("jr r8", 2, 12, 0, ibytes => {
+            // jr cond,imm8
+            _instructionTable[0x18] = new Instruction("jr imm8", 2, 12, 0, ibytes => {
                 sbyte offset = (sbyte)ibytes[1];
                 _regs.PC = (ushort)(_regs.PC + offset);
             });
-            _instructionTable[0x20] = new Instruction("jr nz,r8", 2, 12, 8, ibytes => {
+            _instructionTable[0x20] = new Instruction("jr nz,imm8", 2, 12, 8, ibytes => {
                 sbyte offset = (sbyte)ibytes[1];
                 if(!_regs.GetFlag(CPUFlags.Z))
                     _regs.PC = (ushort)(_regs.PC + offset);
             });
-            _instructionTable[0x28] = new Instruction("jr z,r8", 2, 12, 8, ibytes => {
+            _instructionTable[0x28] = new Instruction("jr z,imm8", 2, 12, 8, ibytes => {
                 sbyte offset = (sbyte)ibytes[1];
                 if(_regs.GetFlag(CPUFlags.Z))
                     _regs.PC = (ushort)(_regs.PC + offset);
             });
-            _instructionTable[0x30] = new Instruction("jr nc,r8", 2, 12, 8, ibytes => {
+            _instructionTable[0x30] = new Instruction("jr nc,imm8", 2, 12, 8, ibytes => {
                 sbyte offset = (sbyte)ibytes[1];
                 if(!_regs.GetFlag(CPUFlags.C))
                     _regs.PC = (ushort)(_regs.PC + offset);
             });
-            _instructionTable[0x38] = new Instruction("jr c,r8", 2, 12, 8, ibytes => {
+            _instructionTable[0x38] = new Instruction("jr c,imm8", 2, 12, 8, ibytes => {
                 sbyte offset = (sbyte)ibytes[1];
                 if(_regs.GetFlag(CPUFlags.C))
                     _regs.PC = (ushort)(_regs.PC + offset);
