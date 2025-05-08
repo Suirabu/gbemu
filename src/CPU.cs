@@ -97,12 +97,7 @@ namespace Emulator
                 INC__r8(ref _bus.GetReferenceToByte(_regs.HL));
             });
             _instructionTable[0x3C] = new Instruction("inc a", 1, 4, 0, _ => { INC__r8(ref _regs.A); });
-            
-            // ld r8,r8
-            _instructionTable[0x40] = new Instruction("ld b,b", 1, 4, 0, _ => {});
-            _instructionTable[0x47] = new Instruction("ld b,a", 1, 4, 0, _ => { _regs.B = _regs.A; });
-            _instructionTable[0x57] = new Instruction("ld d,a", 1, 4, 0, _ => { _regs.D = _regs.A; });
-            
+                        
             // ret
             _instructionTable[0xC0] = new Instruction("ret nz", 1, 20, 8, _ => {
                 if(!_regs.GetFlag(CPUFlags.Z))
@@ -134,6 +129,91 @@ namespace Emulator
                 if(_regs.GetFlag(CPUFlags.C))
                     _regs.PC = (ushort)(_regs.PC + offset);
             });
+
+
+            ///// START - LD R8,R*8 /////
+
+            // ld b,r8
+            _instructionTable[0x40] = new Instruction("ld b, b", 1, 8, 0, _ => {});
+            _instructionTable[0x41] = new Instruction("ld b, c", 1, 8, 0, _ => _regs.B = _regs.C);
+            _instructionTable[0x42] = new Instruction("ld b, d", 1, 8, 0, _ => _regs.B = _regs.D);
+            _instructionTable[0x43] = new Instruction("ld b, e", 1, 8, 0, _ => _regs.B = _regs.E);
+            _instructionTable[0x44] = new Instruction("ld b, h", 1, 8, 0, _ => _regs.B = _regs.H);
+            _instructionTable[0x45] = new Instruction("ld b, l", 1, 8, 0, _ => _regs.B = _regs.L);
+            _instructionTable[0x46] = new Instruction("ld b, (hl)", 1, 8, 0, _ => _regs.B = _bus.ReadByte(_regs.HL));
+            _instructionTable[0x47] = new Instruction("ld b, a", 1, 8, 0, _ => _regs.B = _regs.A);
+
+            // ld c,r8
+            _instructionTable[0x48] = new Instruction("ld c, b", 1, 8, 0, _ => _regs.C = _regs.B);
+            _instructionTable[0x49] = new Instruction("ld c, c", 1, 8, 0, _ => {});
+            _instructionTable[0x4A] = new Instruction("ld c, d", 1, 8, 0, _ => _regs.C = _regs.D);
+            _instructionTable[0x4B] = new Instruction("ld c, e", 1, 8, 0, _ => _regs.C = _regs.E);
+            _instructionTable[0x4C] = new Instruction("ld c, h", 1, 8, 0, _ => _regs.C = _regs.H);
+            _instructionTable[0x4D] = new Instruction("ld c, l", 1, 8, 0, _ => _regs.C = _regs.L);
+            _instructionTable[0x4E] = new Instruction("ld c, (hl)", 1, 8, 0, _ => _regs.C = _bus.ReadByte(_regs.HL));
+            _instructionTable[0x4F] = new Instruction("ld c, a", 1, 8, 0, _ => _regs.C = _regs.A);
+
+            // ld d,r8
+            _instructionTable[0x50] = new Instruction("ld d, b", 1, 8, 0, _ => _regs.D = _regs.B);
+            _instructionTable[0x51] = new Instruction("ld d, c", 1, 8, 0, _ => _regs.D = _regs.C);
+            _instructionTable[0x52] = new Instruction("ld d, d", 1, 8, 0, _ => {});
+            _instructionTable[0x53] = new Instruction("ld d, e", 1, 8, 0, _ => _regs.D = _regs.E);
+            _instructionTable[0x54] = new Instruction("ld d, h", 1, 8, 0, _ => _regs.D = _regs.H);
+            _instructionTable[0x55] = new Instruction("ld d, l", 1, 8, 0, _ => _regs.D = _regs.L);
+            _instructionTable[0x56] = new Instruction("ld d, (hl)", 1, 8, 0, _ => _regs.D = _bus.ReadByte(_regs.HL));
+            _instructionTable[0x57] = new Instruction("ld d, a", 1, 8, 0, _ => _regs.D = _regs.A);
+
+            // ld e,r8
+            _instructionTable[0x58] = new Instruction("ld e, b", 1, 8, 0, _ => _regs.E = _regs.B);
+            _instructionTable[0x59] = new Instruction("ld e, c", 1, 8, 0, _ => _regs.E = _regs.C);
+            _instructionTable[0x5A] = new Instruction("ld e, d", 1, 8, 0, _ => _regs.E = _regs.D);
+            _instructionTable[0x5B] = new Instruction("ld e, e", 1, 8, 0, _ => {});
+            _instructionTable[0x5C] = new Instruction("ld e, h", 1, 8, 0, _ => _regs.E = _regs.H);
+            _instructionTable[0x5D] = new Instruction("ld e, l", 1, 8, 0, _ => _regs.E = _regs.L);
+            _instructionTable[0x5E] = new Instruction("ld e, (hl)", 1, 8, 0, _ => _regs.E = _bus.ReadByte(_regs.HL));
+            _instructionTable[0x5F] = new Instruction("ld e, a", 1, 8, 0, _ => _regs.E = _regs.A);
+
+            // ld h,r8
+            _instructionTable[0x60] = new Instruction("ld h, b", 1, 8, 0, _ => _regs.H = _regs.B);
+            _instructionTable[0x61] = new Instruction("ld h, c", 1, 8, 0, _ => _regs.H = _regs.C);
+            _instructionTable[0x62] = new Instruction("ld h, d", 1, 8, 0, _ => _regs.H = _regs.D);
+            _instructionTable[0x63] = new Instruction("ld h, e", 1, 8, 0, _ => _regs.H = _regs.E);
+            _instructionTable[0x64] = new Instruction("ld h, h", 1, 8, 0, _ => {});
+            _instructionTable[0x65] = new Instruction("ld h, l", 1, 8, 0, _ => _regs.H = _regs.L);
+            _instructionTable[0x66] = new Instruction("ld h, (hl)", 1, 8, 0, _ => _regs.H = _bus.ReadByte(_regs.HL));
+            _instructionTable[0x67] = new Instruction("ld h, a", 1, 8, 0, _ => _regs.H = _regs.A);
+
+            // ld l,r8
+            _instructionTable[0x68] = new Instruction("ld l, b", 1, 8, 0, _ => _regs.L = _regs.B);
+            _instructionTable[0x69] = new Instruction("ld l, c", 1, 8, 0, _ => _regs.L = _regs.C);
+            _instructionTable[0x6A] = new Instruction("ld l, d", 1, 8, 0, _ => _regs.L = _regs.D);
+            _instructionTable[0x6B] = new Instruction("ld l, e", 1, 8, 0, _ => _regs.L = _regs.E);
+            _instructionTable[0x6C] = new Instruction("ld l, h", 1, 8, 0, _ => _regs.L = _regs.H);
+            _instructionTable[0x6D] = new Instruction("ld l, l", 1, 8, 0, _ => {});
+            _instructionTable[0x6E] = new Instruction("ld l, (hl)", 1, 8, 0, _ => _regs.L = _bus.ReadByte(_regs.HL));
+            _instructionTable[0x6F] = new Instruction("ld l, a", 1, 8, 0, _ => _regs.L = _regs.A);
+
+            // ld (hl),r8
+            _instructionTable[0x70] = new Instruction("ld (hl), b", 1, 8, 0, _ => _bus.WriteByte(_regs.HL, _regs.B));
+            _instructionTable[0x71] = new Instruction("ld (hl), c", 1, 8, 0, _ => _bus.WriteByte(_regs.HL, _regs.C));
+            _instructionTable[0x72] = new Instruction("ld (hl), d", 1, 8, 0, _ => _bus.WriteByte(_regs.HL, _regs.D));
+            _instructionTable[0x73] = new Instruction("ld (hl), e", 1, 8, 0, _ => _bus.WriteByte(_regs.HL, _regs.E));
+            _instructionTable[0x74] = new Instruction("ld (hl), h", 1, 8, 0, _ => _bus.WriteByte(_regs.HL, _regs.H));
+            _instructionTable[0x75] = new Instruction("ld (hl), l", 1, 8, 0, _ => _bus.WriteByte(_regs.HL, _regs.L));
+            _instructionTable[0x77] = new Instruction("ld (hl), a", 1, 8, 0, _ => _bus.WriteByte(_regs.HL, _regs.A));
+
+            // ld a,r8
+            _instructionTable[0x78] = new Instruction("ld a, b", 1, 8, 0, _ => _regs.A = _regs.B);
+            _instructionTable[0x79] = new Instruction("ld a, c", 1, 8, 0, _ => _regs.A = _regs.C);
+            _instructionTable[0x7A] = new Instruction("ld a, d", 1, 8, 0, _ => _regs.A = _regs.D);
+            _instructionTable[0x7B] = new Instruction("ld a, e", 1, 8, 0, _ => _regs.A = _regs.E);
+            _instructionTable[0x7C] = new Instruction("ld a, h", 1, 8, 0, _ => _regs.A = _regs.H);
+            _instructionTable[0x7D] = new Instruction("ld a, l", 1, 8, 0, _ => _regs.A = _regs.L);
+            _instructionTable[0x7E] = new Instruction("ld a, (hl)", 1, 8, 0, _ => _regs.A = _bus.ReadByte(_regs.HL));
+            _instructionTable[0x7F] = new Instruction("ld a, a", 1, 8, 0, _ => {});
+
+            ///// END LD R8,R8 /////
+            
 
             // rst XXH instructions
             _instructionTable[0xC7] = new Instruction("rst 00H", 1, 16, 0, _ => { RST__tgt3(0); });
